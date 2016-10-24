@@ -29,7 +29,7 @@ subreddits =        []      # list for all the post subreddits
 subreddit =         []      # temporary variable for appending subreddits into array
 TIMEHOUR =          4       # hour time to post (24 hour time)
 TIMEMINUTE =        20      # minute time to post
-POSTDELAY =         10      # seconds between each post
+POSTDELAY =         15      # seconds between each post
 
 def login():
     print("Logging into reddit")
@@ -105,8 +105,8 @@ def postbot():
                 print('Unable to post ' + URLs[x] + ' (' + titles[x] + ') to /r/' + subreddits[x])
             time.sleep(POSTDELAY)
 
-def WeeklyPostBot():
-    for i in xrange(0,7):
+def WPB(FIRSTDAY):
+    for i in xrange(FIRSTDAY,7):
         loadPosts(str(i))
 
         t = datetime.datetime.today()
@@ -125,8 +125,8 @@ def WeeklyPostBot():
                 print('Unable to post ' + URLs[x] + ' (' + titles[x] + ') to /r/' + subreddits[x])
             time.sleep(POSTDELAY)
 
-def testposts():
-    for i in xrange(0,7):
+def TP(FIRSTDAY):
+    for i in xrange(FIRSTDAY,7):
         loadPosts(str(i))
         for x in range(0,len(titles)):
             try:
@@ -137,7 +137,6 @@ def testposts():
             except:
                 print('Unable to post ' + URLs[x] + ' (' + titles[x] + ') to /r/' + subreddits[x])
             
-#login()
-#loadPosts(str(6))
-testposts()
-#WeeklyPostBot()
+login()
+#TP(0)
+#WPB(0)
