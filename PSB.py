@@ -3,7 +3,7 @@ import time
 import datetime
 import sys
 
-# I don't have a description for this bot. I'm too lazy :P
+# I don"t have a description for this bot. I"m too lazy :P
 
 # post file format:
 # post title    [1]
@@ -12,23 +12,24 @@ import sys
 # repeat for all posts
 
 # Make your own profile file with all these variables for oauth 2
-from profile import APP_UA
-from profile import app_id
-from profile import app_secret
-from profile import app_uri
-from profile import app_scopes
-from profile import app_account_code
-from profile import APP_REFRESH
+
+from PSBProfile import APP_UA
+from PSBProfile import app_id
+from PSBProfile import app_secret
+from PSBProfile import app_uri
+from PSBProfile import app_scopes
+from PSBProfile import app_account_code
+from PSBProfile import APP_REFRESH
 
 r =                 praw.Reddit(APP_UA)
 titles =            []      # list for all the post titles
-title =             ''      # temporary variable for appending titles into array
+title =             ""      # temporary variable for appending titles into array
 URLs =              []      # list for all the post URLs
-URL =               ''      # temporary variable for appending URLs into array
+URL =               ""      # temporary variable for appending URLs into array
 subreddits =        []      # list for all the post subreddits
 subreddit =         []      # temporary variable for appending subreddits into array
 TIMEHOUR =          4       # hour time to post (24 hour time)
-TIMEMINUTE =        20      # minute time to post
+TIMEMINUTE =        15      # minute time to post minus five
 POSTDELAY =         15      # seconds between each post
 
 def login():
@@ -49,7 +50,7 @@ def loadPosts(day):
     typeOfLine =    1;                      # see above; sorts lines
     # sorts input into correct array
     for line in postsfile:
-        line = line.rstrip('\n')            # removes \n from line
+        line = line.rstrip("\n")            # removes \n from line
         if typeOfLine == 1:                 # post title
             title = line
             titles.append(title)
@@ -76,25 +77,26 @@ def loadPosts(day):
     print(len(subreddits))
 
 def isholdthemoan(sc):
-    if sc == 'holdthemoan':
+    if sc == "holdthemoan":
         print("make sure the post title contains [GIF] or [IMG]")
 
 def postbot():
     # This function is somewhat defunct
 
     # if for some reason this script is still running
-    # after a year, we'll stop after 365 days
+    # after a year, we"ll stop after 365 days
     loadPosts(str(0))
     for i in xrange(0,365):
         # sleep until specified time
         t = datetime.datetime.today()
-        future = datetime.datetime(t.year,t.month,t.day,TIMEHOUR,TIMEMINUTE)
+        randMinute = TIMEMINUTE + randint(0,5) + randint(0,5)
+        future = datetime.datetime(t.year,t.month,t.day,TIMEHOUR,randMinute)
         if t.hour >= TIMEHOUR:
             future += datetime.timedelta(days=1)
-        print("wait until " + str(TIMEHOUR) + ":" + str(TIMEMINUTE) + "AM")
+        print("wait until " + str(TIMEHOUR) + ":" + str(randMinute) + "AM")
         time.sleep((future-t).seconds)
         # do stuff at specified time
-        user = r.get_redditor('exoticmind_2')   # Retrieve post and comment karma
+        user = r.get_redditor("exoticmind_2")   # Retrieve post and comment karma
         print(user.link_karma)
         print(user.comment_karma)
         for x in range(0,len(titles)):
@@ -102,7 +104,7 @@ def postbot():
                 r.submit(subreddits[x], titles[x], url=URLs[x])
                 print("posted post " + URLs[x] + " (" + titles[x] + ") to /r/" + subreddits[x])
             except:
-                print('Unable to post ' + URLs[x] + ' (' + titles[x] + ') to /r/' + subreddits[x])
+                print("Unable to post " + URLs[x] + " (" + titles[x] + ") to /r/" + subreddits[x])
             time.sleep(POSTDELAY)
 
 def WPB(FIRSTDAY):
@@ -110,19 +112,20 @@ def WPB(FIRSTDAY):
         loadPosts(str(i))
 
         t = datetime.datetime.today()
-        future = datetime.datetime(t.year,t.month,t.day + 1,TIMEHOUR,TIMEMINUTE)
+        randMinute = TIMEMINUTE + randint(0,5) + randint(0,5)
+        future = datetime.datetime(t.year,t.month,t.day + 1,TIMEHOUR,randMinute)
         #future += datetime.timedelta(days=1)
-        print("wait until " + str(future.month) + " " + str(future.day) + ", " + str(future.year) + " at " + str(TIMEHOUR) + ":" + str(TIMEMINUTE) + "AM")
+        print("wait until " + str(future.month) + " " + str(future.day) + ", " + str(future.year) + " at " + str(TIMEHOUR) + ":" + str(randMinute) + "AM")
         time.sleep((future-t).seconds)
         for x in range(0,len(titles)):
             try:
                 post = r.submit(subreddits[x], titles[x], url=URLs[x])
                 print("posted post " + URLs[x] + " (" + titles[x] + ") to /r/" + subreddits[x])
-                if titles[x] == 'hi':
+                if titles[x] == "hi":
                     post.mark_as_nsfw()
                     print("marked post " + URLs[x] + " (" + titles[x] + ") to /r/" + subreddits[x] + " as nsfw")
             except:
-                print('Unable to post ' + URLs[x] + ' (' + titles[x] + ') to /r/' + subreddits[x])
+                print("Unable to post " + URLs[x] + " (" + titles[x] + ") to /r/" + subreddits[x])
             time.sleep(POSTDELAY)
 
 def TP(FIRSTDAY):
@@ -131,12 +134,12 @@ def TP(FIRSTDAY):
         for x in range(0,len(titles)):
             try:
                 print("posted post " + URLs[x] + " (" + titles[x] + ") to /r/" + subreddits[x])
-                if titles[x] == 'hi':
+                if titles[x] == "hi":
                     post.mark_as_nsfw()
                     print("marked post " + URLs[x] + " (" + titles[x] + ") to /r/" + subreddits[x] + " as nsfw")
             except:
-                print('Unable to post ' + URLs[x] + ' (' + titles[x] + ') to /r/' + subreddits[x])
+                print("Unable to post " + URLs[x] + " (" + titles[x] + ") to /r/" + subreddits[x])
             
-login()
-#TP(0)
+#login()
+TP(0)
 #WPB(0)
