@@ -3,7 +3,10 @@ import time
 import datetime
 import sys
 
-# I don"t have a description for this bot. I"m too lazy :P
+# I don"t have a description for this bot. I"m too lazy :P It is important to
+# note that this bot is specialized for me. I may make a generalized version
+# if anyone actually sees this and would like one. I just don't need it right
+# now.
 
 # post file format:
 # post title    [1]
@@ -12,7 +15,6 @@ import sys
 # repeat for all posts
 
 # Make your own profile file with all these variables for oauth 2
-
 from PSBProfile import APP_UA
 from PSBProfile import app_id
 from PSBProfile import app_secret
@@ -21,21 +23,41 @@ from PSBProfile import app_scopes
 from PSBProfile import app_account_code
 from PSBProfile import APP_REFRESH
 
+from random import randint
+
+# Reddit instance
 r =                 praw.Reddit(APP_UA)
-titles =            []      # list for all the post titles
-title =             ""      # temporary variable for appending titles into array
-URLs =              []      # list for all the post URLs
-URL =               ""      # temporary variable for appending URLs into array
-subreddits =        []      # list for all the post subreddits
-subreddit =         []      # temporary variable for appending subreddits into array
-TIMEHOUR =          4       # hour time to post (24 hour time)
-TIMEMINUTE =        15      # minute time to post minus five
-POSTDELAY =         15      # seconds between each post
+# List for all the post titles
+titles =            []
+# Temporary variable for appending titles into array
+title =             ""
+# List for all the post URLs
+URLs =              []
+# Temporary variable for appending URLs into array
+URL =               ""
+# List for all the post subreddits
+subreddits =        []
+# Temporary variable for appending subreddits into array
+subreddit =         []
+# Array of posts that have to get tagged NSFW
+NSFWPostTitles = 	[]
+# Hour time to post (24 hour time)
+TIMEHOUR =          4
+# Minute time to post minus five
+TIMEMINUTE =        15
+# Seconds between each post
+POSTDELAY =         15
 
 def login():
     print("Logging into reddit")
-    r.set_oauth_app_info(app_id, app_secret, app_uri)
-    r.refresh_access_information(APP_REFRESH)
+    hello = True
+    while hello:
+        try:
+            r.set_oauth_app_info(app_id, app_secret, app_uri)
+            r.refresh_access_information(APP_REFRESH)
+            hello = False
+        except:
+            print("Retrying")
     print("Log in successful")
     return r
 
@@ -57,18 +79,16 @@ def loadPosts(day):
         elif typeOfLine == 2:               # URL
             URL = line
             URLs.append(URL)
-        elif typeOfLine == 3:               # subreddit; loads in multiple subreddits with titles/URLs if necessary
+        elif typeOfLine == 3:               # subreddit
             subreddit = line.split()
-            isholdthemoan(subreddit)
             subreddits.append(subreddit[0])
-            typeOfLine = 0                  # resets typeOfLine because we move on to a new post
-            # Everything below is only for xposting
+            typeOfLine = 0       # resets typeOfLine to move on to a new post
+            # Everything below is for xposting
             numberOfSubreddits = len(subreddit)
             if numberOfSubreddits > 1:
                 for x in range(numberOfSubreddits - 1):
                     titles.append(title)
                     URLs.append(URL)
-                    isholdthemoan(subreddit[x+1])
                     subreddits.append(subreddit[x + 1])
         typeOfLine += 1                     # move on to next line type
     # prints for testing
@@ -76,57 +96,36 @@ def loadPosts(day):
     print(len(URLs))
     print(len(subreddits))
 
-def isholdthemoan(sc):
-    if sc == "holdthemoan":
-        print("make sure the post title contains [GIF] or [IMG]")
-
-def postbot():
-    # This function is somewhat defunct
-
-    # if for some reason this script is still running
-    # after a year, we"ll stop after 365 days
-    loadPosts(str(0))
-    for i in xrange(0,365):
-        # sleep until specified time
-        t = datetime.datetime.today()
-        randMinute = TIMEMINUTE + randint(0,5) + randint(0,5)
-        future = datetime.datetime(t.year,t.month,t.day,TIMEHOUR,randMinute)
-        if t.hour >= TIMEHOUR:
-            future += datetime.timedelta(days=1)
-        print("wait until " + str(TIMEHOUR) + ":" + str(randMinute) + "AM")
-        time.sleep((future-t).seconds)
-        # do stuff at specified time
-        user = r.get_redditor("exoticmind_2")   # Retrieve post and comment karma
-        print(user.link_karma)
-        print(user.comment_karma)
-        for x in range(0,len(titles)):
-            try:
-                r.submit(subreddits[x], titles[x], url=URLs[x])
-                print("posted post " + URLs[x] + " (" + titles[x] + ") to /r/" + subreddits[x])
-            except:
-                print("Unable to post " + URLs[x] + " (" + titles[x] + ") to /r/" + subreddits[x])
-            time.sleep(POSTDELAY)
-
 def WPB(FIRSTDAY):
     for i in xrange(FIRSTDAY,7):
         loadPosts(str(i))
-
         t = datetime.datetime.today()
         randMinute = TIMEMINUTE + randint(0,5) + randint(0,5)
-        future = datetime.datetime(t.year,t.month,t.day + 1,TIMEHOUR,randMinute)
-        #future += datetime.timedelta(days=1)
+        future = datetime.datetime(t.year,t.month,t.day,TIMEHOUR,randMinute)
+        if TIMEHOUR <= t.hour and randMinute <= t.minute:
+            future += datetime.timedelta(days=1)
+    	
+        print(titles[0])
         print("wait until " + str(future.month) + " " + str(future.day) + ", " + str(future.year) + " at " + str(TIMEHOUR) + ":" + str(randMinute) + "AM")
-        time.sleep((future-t).seconds)
-        for x in range(0,len(titles)):
-            try:
-                post = r.submit(subreddits[x], titles[x], url=URLs[x])
-                print("posted post " + URLs[x] + " (" + titles[x] + ") to /r/" + subreddits[x])
-                if titles[x] == "hi":
-                    post.mark_as_nsfw()
-                    print("marked post " + URLs[x] + " (" + titles[x] + ") to /r/" + subreddits[x] + " as nsfw")
-            except:
-                print("Unable to post " + URLs[x] + " (" + titles[x] + ") to /r/" + subreddits[x])
-            time.sleep(POSTDELAY)
+    	time.sleep((future-t).seconds)
+    	postRange = range(0,len(titles)) # lets me skip the flair name subreddits 
+    	postRange_iter = iter(postRange)
+    	for x in postRange_iter:
+    		try:
+    			post = r.submit(subreddits[x], titles[x], url=URLs[x])
+    			print("posted post " + URLs[x] + " (" + titles[x] + ") to /r/" + subreddits[x])
+    			for NSFWTitles in NSFWPostTitles:  # marks any post as nsfw
+    				if titles[x] == NSFWTitles:
+    					post.mark_as_nsfw()
+    					print("marked post " + URLs[x] + " (" + titles[x] + ") to /r/" + subreddits[x] + " as nsfw")
+    			if subreddits[x] == "holdthemoan":
+    				flair = subreddits[x+1]
+    				r.set_flair("holdthemoan", post, flair_text=flair, flair_css_class=flair)
+    				print("flaired post " + URLs[x] + " (" + titles[x] + ") to /r/" + subreddits[x] + " as " + flair)
+    				next(postRange_iter)
+    		except:
+    			print("Unable to post " + URLs[x] + " (" + titles[x] + ") to /r/" + subreddits[x])
+    		time.sleep(POSTDELAY)
 
 def TP(FIRSTDAY):
     for i in xrange(FIRSTDAY,7):
@@ -139,7 +138,29 @@ def TP(FIRSTDAY):
                     print("marked post " + URLs[x] + " (" + titles[x] + ") to /r/" + subreddits[x] + " as nsfw")
             except:
                 print("Unable to post " + URLs[x] + " (" + titles[x] + ") to /r/" + subreddits[x])
-            
-#login()
-TP(0)
-#WPB(0)
+
+def TestPosting():
+	loadPosts('flairTestFile')
+	postRange = range(0,len(titles)) # lets me skip the flair name subreddits 
+	postRange_iter = iter(postRange)
+	for x in postRange_iter:
+		try:
+			post = r.submit(subreddits[x], titles[x], url=URLs[x])
+			print("posted post " + URLs[x] + " (" + titles[x] + ") to /r/" + subreddits[x])
+			for NSFWTitles in NSFWPostTitles:  # marks any post as nsfw
+				if titles[x] == NSFWTitles:
+					post.mark_as_nsfw()
+					print("marked post " + URLs[x] + " (" + titles[x] + ") to /r/" + subreddits[x] + " as nsfw")
+			if subreddits[x] == "holdthemoan":
+				flair = subreddits[x+1]
+				r.set_flair("holdthemoan", post, flair_text=flair, flair_css_class=flair)
+				print("flaired post " + URLs[x] + " (" + titles[x] + ") to /r/" + subreddits[x] + " as " + flair)
+				next(postRange_iter)
+		except:
+			print("Unable to post " + URLs[x] + " (" + titles[x] + ") to /r/" + subreddits[x])
+		time.sleep(POSTDELAY)
+
+login()
+#TP(3)
+WPB(4)
+#TestPosting()
