@@ -1,4 +1,5 @@
-# intervalPostBot
+# Post Scheduler Bot
+
 I have no idea how github formatting works, so we'll see how this turns out.
 
 Most of the script's description I put in the header of the script file itself, so if you read this you probably won't have to read that.
