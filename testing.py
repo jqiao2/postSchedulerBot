@@ -1,13 +1,13 @@
 import praw
 
 #Make your own profile file with all these variables for oauth 2
-from profile import APP_UA
-from profile import app_id
-from profile import app_secret
-from profile import app_uri
-from profile import app_scopes
-from profile import app_account_code
-from profile import APP_REFRESH
+from PSBProfile import APP_UA
+from PSBProfile import app_id
+from PSBProfile import app_secret
+from PSBProfile import app_uri
+from PSBProfile import app_scopes
+from PSBProfile import app_account_code
+from PSBProfile import APP_REFRESH
 
 r = praw.Reddit(APP_UA)
 
@@ -18,10 +18,9 @@ def login():
     print("Log in successful")
     return r
 
-#login()
-
 def test():
-	for x in xrange(0,7):
-		print(x)
+	post = r.submit("holdthemoan", "Quick Flash Goodbye [GIF]", url="https://gfycat.com/WholeRepentantFowl")
+	r.set_flair("holdthemoan", post, flair_text='flash', flair_css_class='flash')
 
+login()
 test()

@@ -29,6 +29,7 @@ from PSBProfile import CLIENT_ID
 from PSBProfile import PASSWORD
 from PSBProfile import CLIENT_SECRET
 from PSBProfile import USERNAME
+from PSBProfile import FLAIRSUBS
 
 from random import randint
 
@@ -45,10 +46,10 @@ subreddits =            []
 NSFWPOSTTITLES =        []
 # Name of subreddit(s) that have flairs
 # The code only allows you to flair on subreddits with mod permissions
-# As you can see, I only need to flair holdthemoan posts, so if you need to flair
+# As you can see, I only need to flair one subreddit, so if you need to flair
 # other subreddits, just change it to an array and make the changes to where
 # it is referenced as well
-FLAIRSUBS =             "holdthemoan"
+FLAIR_SUBS =             FLAIRSUBS
 # Hour time to post (24 hour time) 
 TIMEHOUR_DEFAULT =      4
 TIMEHOUR =              TIMEHOUR_DEFAULT
@@ -121,12 +122,13 @@ def WPB(FIRSTDAY):
         for x in postRange_iter:
             try:
                 post = r.subreddit(subreddits[x]).submit(title = titles[x], url = URLs[x])
-                print("posted post " + URLs[x] + " (" + titles[x] + ") to /r/" + subreddits[x])
+                # print("posted post " + URLs[x] + " (" + titles[x] + ") to /r/" + subreddits[x])
+                print(post)
                 for NSFWTitles in NSFWPOSTTITLES:  # marks any post as nsfw
                     if titles[x] == NSFWTitles:
                         post.mark_as_nsfw()
                         print("marked post " + URLs[x] + " (" + titles[x] + ") to /r/" + subreddits[x] + " as nsfw")
-                if subreddits[x] == FLAIRSUBS:
+                if subreddits[x] == FLAIR_SUBS:
                     flair = subreddits[x+1]
                     post.mod.flair(text=flair, css_class=flair)
                     print("flaired post " + URLs[x] + " (" + titles[x] + ") to /r/" + subreddits[x] + " as " + flair)
@@ -143,7 +145,7 @@ def TP(FIRSTDAY):
         for x in postRange_iter:
             try:
                 print("posted post " + URLs[x] + " (" + titles[x] + ") to /r/" + subreddits[x])
-                if subreddits[x] == FLAIRSUBS:
+                if subreddits[x] == FLAIR_SUBS:
                     flair = subreddits[x+1]
                     print("flaired post " + URLs[x] + " (" + titles[x] + ") to /r/" + subreddits[x] + " as " + flair)
                     next(postRange_iter)
@@ -174,7 +176,7 @@ def PostSingleDay(DAY):
                 if titles[x] == NSFWTitles:
                     post.mark_as_nsfw()
                     print("marked post " + URLs[x] + " (" + titles[x] + ") to /r/" + subreddits[x] + " as nsfw")
-            if subreddits[x] == FLAIRSUBS:
+            if subreddits[x] == FLAIR_SUBS:
                 flair = subreddits[x+1]
                 post.mod.flair(text=flair, css_class=flair)
                 print("flaired post " + URLs[x] + " (" + titles[x] + ") to /r/" + subreddits[x] + " as " + flair)
@@ -183,10 +185,15 @@ def PostSingleDay(DAY):
             print("Unable to post " + URLs[x] + " (" + titles[x] + ") to /r/" + subreddits[x])
         time.sleep(POSTDELAY)
 
+def post():
+    post = r.subreddit("exoticmind").submit(title = "test", selftext = "hello")
+    print(post)
+
 # All input is the day to start on (0 = Monday, etc etc)
 # actual posting function, constructor corresponds to the day you're on
 # WPB(0)
 # used to make sure the files are named properly
-TP(0)
+# TP(0)
 # posts a single day
 # TestPosting(0)
+post()
