@@ -2,10 +2,8 @@ import praw
 import time
 import datetime
 
-# This script will post onto Reddit everyday by week under some circumstances:
-# 1. You have enough karma from the subreddit to not get auto-blocked. If you are, your posts won't
-#    get posted.
-# 2. You put them in right, obviously.
+# This script will post onto Reddit everyday by week if you have enough karma from the subreddit to
+# not get auto-blocked. If you are, your posts won't get posted.
 # You will need eight separate files for this script to work. One is the profile file. This includes
 # all the APP_UA, app_id, etc to associate this script with your Reddit account. The other seven
 # files are the ones that contain your posts for that day (i.e. file 0 contains the posts for day
@@ -19,7 +17,6 @@ import datetime
 # also make sure you indicate so down below so the script knows to look for a flair after the
 # subreddit name. This only works if you are a mod of that subreddit.
 
-
 # Make your own profile file with all these variables for oauth 2
 from PSBProfile import USERAGENT
 from PSBProfile import CLIENT_ID
@@ -31,8 +28,8 @@ from PSBProfile import FLAIRSUBS
 from random import randint
 
 # Reddit instance, logs in for you (I think lol I have no idea)
-r = praw.Reddit(client_id = CLIENT_ID, client_secret = CLIENT_SECRET, password = PASSWORD,
-                user_agent = USERAGENT, username = USERNAME)
+r = praw.Reddit(client_id=CLIENT_ID, client_secret=CLIENT_SECRET, password=PASSWORD,
+                user_agent=USERAGENT, username=USERNAME)
 # List for all the post titles
 titles = []
 # List for all the post URLs
@@ -109,7 +106,7 @@ def weekly_post_bot(first_day):
         rand_minute = TIMEMINUTE + randint(0, 5) + randint(0, 5)
         future = datetime.datetime(t.year, t.month, t.day, TIMEHOUR, rand_minute)
         if TIMEHOUR <= t.hour and rand_minute <= t.minute:
-            future += datetime.timedelta(days = 1)
+            future += datetime.timedelta(days=1)
 
         print(titles[0])
         print("wait until " + str(future.month) + " " + str(future.day) + ", " + str(
@@ -120,7 +117,7 @@ def weekly_post_bot(first_day):
         post_range_iter = iter(post_range)
         for x in post_range_iter:
             try:
-                post = r.subreddit(subreddits[x]).submit(title = titles[x], url = URLs[x])
+                post = r.subreddit(subreddits[x]).submit(title=titles[x], url=URLs[x])
                 # print("posted post " + URLs[x] + " (" + titles[x] + ") to /r/" + subreddits[x])
                 print(post)
                 for NSFWTitles in NSFW_POST_TITLES:  # marks any post as nsfw
@@ -130,7 +127,7 @@ def weekly_post_bot(first_day):
                             x] + " as nsfw")
                 if subreddits[x] == FLAIR_SUBS:
                     flair = subreddits[x + 1]
-                    post.mod.flair(text = flair, css_class = flair)
+                    post.mod.flair(text=flair, css_class=flair)
                     print("flaired post " + URLs[x] + " (" + titles[x] + ") to /r/" + subreddits[
                         x] + " as " + flair)
                     next(post_range_iter)
@@ -164,7 +161,7 @@ def post_single_day(day):
     rand_minute = TIMEMINUTE + randint(0, 5) + randint(0, 5)
     future = datetime.datetime(t.year, t.month, t.day, TIMEHOUR, rand_minute)
     if TIMEHOUR <= t.hour and rand_minute <= t.minute:
-        future += datetime.timedelta(days = 1)
+        future += datetime.timedelta(days=1)
 
     print(titles[0])
     print("wait until " + str(future.month) + " " + str(future.day) + ", " + str(
@@ -175,7 +172,7 @@ def post_single_day(day):
     post_range_iter = iter(post_range)
     for x in post_range_iter:
         try:
-            post = r.subreddit(subreddits[x]).submit(title = titles[x], url = URLs[x])
+            post = r.subreddit(subreddits[x]).submit(title=titles[x], url=URLs[x])
             print("posted post " + URLs[x] + " (" + titles[x] + ") to /r/" + subreddits[x])
             for NSFWTitles in NSFW_POST_TITLES:  # marks any post as nsfw
                 if titles[x] == NSFWTitles:
@@ -184,7 +181,7 @@ def post_single_day(day):
                         x] + " as nsfw")
             if subreddits[x] == FLAIR_SUBS:
                 flair = subreddits[x + 1]
-                post.mod.flair(text = flair, css_class = flair)
+                post.mod.flair(text=flair, css_class=flair)
                 print("flaired post " + URLs[x] + " (" + titles[x] + ") to /r/" + subreddits[
                     x] + " as " + flair)
                 next(post_range_iter)
@@ -194,14 +191,15 @@ def post_single_day(day):
 
 
 def post():
-    post = r.subreddit("exoticmind").submit(title = "test", selftext = "hello")
+    post = r.subreddit("exoticmind").submit(title="test", selftext="hello")
     print(post)
+
 
 # All input is the day to start on (0 = Monday, etc etc)
 # actual posting function, constructor corresponds to the day you're on
 # weekly_post_bot(0)
 # used to make sure the files are named properly
-# TP(0)
+test_post(0)
 # posts a single day
-# TestPosting(0)
+# test_posting(0)
 # post()

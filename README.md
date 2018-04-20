@@ -1,7 +1,5 @@
 # Post Scheduler Bot
 
-I have no idea how github formatting works, so we'll see how this turns out.
-
 Most of the script's description I put in the header of the script file itself, so if you read this you probably won't have to read that.
 
 This script will post to Reddit everyday by week under some circumstances:
@@ -17,3 +15,5 @@ You will need eight other files for this script to work. One is the profile file
 4. Continue for all posts
 
 If a subreddit requires you to flair a post, put the flair name after the subreddit name, but also make sure you indicate in the FLAIRSUBS constant, so the script knows to look for a flair after the subreddit name. This only works if you are a mod of that subreddit because that's how I made it...
+
+Finally, it makes all the posts daily one after another with ~15 seconds in between. You can increase the time gap between each post and also when to post it. Right now, it's set to post some time around 4am PST.
