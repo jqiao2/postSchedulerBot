@@ -1,6 +1,6 @@
 # Post Scheduler Bot
 
-### This is not up-to-date. I would check the documentation in the files themselves to understand how the bot works.
+### This READ-ME is not up-to-date. I would check the documentation in the files themselves to understand how the bot works.
 
 Most of the script's description I put in the header of the script file itself, so if you read this you probably won't have to read that.
 
